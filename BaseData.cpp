@@ -48,16 +48,16 @@ BaseData BaseData::operator / (BaseData& c) {
 	return *res;
 }
 
-//BaseData BaseData::operator ^ (BaseData& c) {
-//	BaseData res;
-//	res.number = powl(this->number, c.number)
-//	return res;
-//}
-//
-//BaseData BaseData::Sqrt(BaseData& num) {
-//	BaseData<T> res;
-//	return res;
-//}
+BaseData BaseData::Sqre(BaseData& c) {
+	BaseData* res = new BaseData();
+	res->number = powl(this->number, c.number);
+	return *res;
+}
+
+BaseData BaseData::Sqrt(BaseData& c) {
+	c.number = 1 / c.number;
+	return this->Sqre(c);
+}
 
 
 
@@ -252,32 +252,34 @@ void AccNumber::ReverseOrder() {
 /// Complex
 /// ---------------------------------------------------------------------------------
 string Complex::GetNumber() {
-	return to_string(this->real()) + "+" + to_string(this->imag()) + "i";
+	string joinStr = this->imag < 0 ? "" : "+";
+	return to_string(this->real) + joinStr + to_string(this->imag) + "i";
 }
 
 void Complex::SetNumber(string number) {
-
-	// (-1+2i) (-1-2i) (1+2i) (1-2i)
 	number.pop_back(); number.erase(0, 1);
-	if (number.back() == 'i') {    // (1+2i)  ||  (2i)
+	if (number.back() == 'i') {
 		number.pop_back();    // 弹掉i符号
-
-		size_t indexAdd = number.find('+');
-		size_t indexSub = number.find_last_of('-');
-		
-
-		if (indexAdd == string::npos && indexSub == string::npos) {
-			this->real(0);
-			this->imag(stold(number));
+		auto indexAdd = number.find('+');
+		if (indexAdd == string::npos) {
+			// 2i  -2i   -1-2i   1-2i 四种情况
+			auto indexSub = number.find_last_of('-');
+			if (indexSub == string::npos) {
+				this->real = 0;
+			}
+			else if (indexSub != 0) {
+				this->real = stold(number.substr(0, indexSub));
+			}
+			this->imag = stold(number.substr(indexSub));
 		}
 		else {
-			//this->real(stold(number.substr(0, index)));
-			//this->imag(stold(number.substr(index)));
+			this->real = stold(number.substr(0, indexAdd));
+			this->imag = stold(number.substr(indexAdd));
 		}
 	}
 	else {    // (1)
-		this->real(stold(number));
-		this->imag(0);
+		this->real = stold(number);
+		this->imag = 0;
 	}
 }
 
@@ -287,7 +289,7 @@ bool Complex::IsNumber(string str) {
 	}
 	for (int i = 1; i < str.size() - 1; i++) {
 		int tem = (int)str[i];
-		if (!(tem >= 48 && tem <= 57 || tem == 43 || tem == 45 || tem == 46)) {
+		if (!(tem >= 48 && tem <= 57 || tem == 43 || tem == 45 || tem == 46 || tem == 105)) {
 			return false;
 		}
 	}
@@ -296,21 +298,30 @@ bool Complex::IsNumber(string str) {
 
 Complex Complex::operator + (Complex& c) {
 	Complex* res = new Complex();
+	res->real = this->real + c.real;
+	res->imag = this->imag + c.imag;
 	return *res;
 }
 
 Complex Complex::operator - (Complex& c) {
 	Complex* res = new Complex();
+	res->real = this->real - c.real;
+	res->imag = this->imag - c.imag;
 	return *res;
 }
 
 Complex Complex::operator * (Complex& c) {
 	Complex* res = new Complex();
+	res->real = this->real * c.real - this->imag * c.imag;
+	res->imag = this->imag * c.real + this->real * c.imag;
 	return *res;
 }
 
 Complex Complex::operator / (Complex& c) {
 	Complex* res = new Complex();
+	long double baseNumber = pow(c.real, 2) + pow(c.imag, 2);
+	res->real = (this->real * c.real + this->imag * c.imag) / baseNumber;
+	res->imag = (this->imag * c.real - this->real * c.imag) / baseNumber;
 	return *res;
 }
 

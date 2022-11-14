@@ -2,10 +2,11 @@
 #include <string>
 #include <cmath>
 #include <vector>
-#include <complex>
 
 using namespace std;
 
+#ifndef BASEDATA_CPP
+#define BASEDATA_CPP
 
 // 基本数据类（实数）（加、减、乘、除、乘方、开方）
 class BaseData {
@@ -17,10 +18,13 @@ public:
 	BaseData operator - (BaseData& c);
 	BaseData operator * (BaseData& c);
 	BaseData operator / (BaseData& c);
+	BaseData operator % (BaseData& c) {
+		return *new BaseData();
+	}
 	// 乘方
-	//BaseData operator ^ (BaseData& c);
+	BaseData Sqre(BaseData& c);
 	// 开方
-	//BaseData Sqrt(BaseData& num);
+	BaseData Sqrt(BaseData& c);
 private:
 	long double number;
 };
@@ -37,6 +41,14 @@ public:
 	AccNumber operator * (AccNumber& c);
 	AccNumber operator / (AccNumber& c);
 	AccNumber operator % (AccNumber& c);
+
+
+	AccNumber Sqre(AccNumber& c) {
+		return *new AccNumber();
+	}
+	AccNumber Sqrt(AccNumber& c) {
+		return *new AccNumber();
+	}
 private:
 	string number;
 	bool isMinus;
@@ -45,14 +57,29 @@ private:
 
 
 // 复数数据类型（整数）（加、减、乘、除）
-class Complex : public complex<long double> {
+class Complex {
 public:
 	string GetNumber();
 	void SetNumber(string number);
 	bool IsNumber(string str);
-	
 	Complex operator + (Complex& c);
 	Complex operator - (Complex& c);
 	Complex operator * (Complex& c);
 	Complex operator / (Complex& c);
+	Complex operator % (Complex& c) {
+		return *new Complex();
+	}
+	// 乘方
+	Complex Sqre(Complex& c) {
+		return *new Complex();
+	}
+	// 开方
+	Complex Sqrt(Complex& c) {
+		return *new Complex();
+	}
+private:
+	long double real;
+	long double imag;
 };
+
+#endif

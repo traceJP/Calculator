@@ -40,9 +40,14 @@ void Calculate<T>::Operate() {
 	case '/':
 		res = vb / va;
 		break;
+	case '%':
+		res = vb % va;
+		break;
 	case '^':
+		res = vb.Sqre(va);
 		break;
 	case '#':
+		res = vb.Sqrt(va);
 		break;
 	default:
 		throw new exception();

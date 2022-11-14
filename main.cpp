@@ -3,7 +3,7 @@
 
 int main() {
 	// BaseData AccNumber Complex
-	Calculate<BaseData>* optor = new Calculate<BaseData>();
+	Calculate<Complex>* optor = new Calculate<Complex>();
 	vector<string> keywords;
 	string word;
 	cout << "请输入计算公式：";
