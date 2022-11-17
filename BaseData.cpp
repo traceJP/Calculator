@@ -129,6 +129,8 @@ AccNumber AccNumber::operator + (AccNumber& c) {
 
 	acc->SetNumber(res);
 	acc->ReverseOrder();
+	this->ReverseOrder();
+	c.ReverseOrder();
 	return *acc;
 }
 
@@ -156,7 +158,7 @@ AccNumber AccNumber::operator - (AccNumber& c) {
 	// 减数大于被减数，结果为负（交换两数并结果置负）（比较两数）
 	bool resIsMinus = false;
 	if (num.size() == numd.size()) {
-		for (size_t i = num.size() - 1; i >= 0;i--) {
+		for (long long int i = num.size() - 1; i >= 0;i--) {
 			if (num[i] != numd[i]) {
 				resIsMinus = num[i] < numd[i];
 				break;
@@ -187,6 +189,8 @@ AccNumber AccNumber::operator - (AccNumber& c) {
 	
 	acc->SetNumber(res);
 	acc->ReverseOrder();
+	this->ReverseOrder();
+	c.ReverseOrder();
 	return *acc;
 }
 
@@ -199,53 +203,120 @@ AccNumber AccNumber::operator * (AccNumber& c) {
 	}
 
 	// 计算
-	//https://blog.csdn.net/PYcharmRoot/article/details/122682074
 	this->ReverseOrder();
 	c.ReverseOrder();
 	string res, num = this->number, numd = c.number;
-
-	/*
-vector<int> res;
-	for (int i = 0; i < num.size(); i++) {
-		for (int j = 0; j < numd.size(); j++) {
-			res[i + j] += (num[i] - '0') * (numd[j] - '0');
+	res.resize(num.size() + numd.size());
+	int temp;
+	for (int i = 0;i < num.size();i++) {
+		temp = 0;
+		for (int j = 0;j < numd.size();j++) {
+			if (res[i + j] == NULL) {
+				res[i + j] = '0';
+			}
+			int bit = int(num[i] - '0') * int(numd[j] - '0') + int(res[i + j] - '0') + temp;
+			temp = bit / 10;
+			res[i + j] = (bit % 10) + '0';
 		}
-	}
-	for (int i = 0;i < num.size() + numd.size();i++) {    // 处理进位
-		res[i] = res[i - 1] / 10;
-		res[i - 1] %= 10;
+		res[i + numd.size()] = temp + '0';
 	}
 	while (res.back() == '0' && res.size() > 1) {
 		res.pop_back();
 	}
-	string resfor;
-	for (int i = 0; i < res.size(); i++) {
-		resfor += to_string(res[i]);
-	}
-	*/
-	// vector<int> 转 string
 	acc->SetNumber(res);
 	acc->ReverseOrder();
+	this->ReverseOrder();
+	c.ReverseOrder();
 	return *acc;
 }
 
 AccNumber AccNumber::operator / (AccNumber& c) {
 	AccNumber* acc = new AccNumber();
+
+	// 负数处理
+	if (this->isMinus || c.isMinus) {    // (-1) / 1  ||  1 / (-1)
+		acc->isMinus = true;
+	}
+
+	// 计算
+	string res, num = this->number, numd = c.number;
+	int resLength = num.size() - numd.size() + 1;
+	for (int i = 0; i < resLength; i++) {
+		res.push_back('0');
+	}
+
+	// 如果被除数大于除数，则默认直接返回0
+	if (num.size() == numd.size()) {
+		for (long long int j = 0; j < this->number.size();j++) {
+			if (num[j] < numd[j]) {
+				acc->SetNumber("0");
+				return *acc;
+			}
+		}
+	}
+	else if (num.size() < numd.size()) {
+		acc->SetNumber("0");
+		return *acc;
+	}
+
+	// 用temp来记录numd变化，num一直减下去就可以了
+	AccNumber temp;
+	while (numd.size() != this->number.size()) {
+		numd.push_back('0');
+	}
+	numd.push_back('0');   // 多补一个0标志位
+	// 模拟减法
+	for (int i = resLength - 1;i >= 0;i--) {
+		numd.pop_back();
+		temp.SetNumber(numd);
+		temp.isMinus = false;
+		bool back = true;
+		while (back) {
+			if (this->number.size() == temp.number.size()) {
+				for (long long int j = 0; j < this->number.size();j++) {
+					if (this->number[j] < temp.number[j]) {
+						back = false;
+						break;
+					}
+					else if (this->number[j] > temp.number[j]) {
+						back = true;
+						break;
+					}
+				}
+			}
+			else {
+				back = temp.number.size() < this->number.size();
+			}
+			if (back) {
+				res[i] = (int(res[i] - '0') + 1) + '0';
+				*this = *this - temp;
+			}
+		}
+	}
+	while (res.back() == '0' && res.size() > 1) {
+		res.pop_back();
+	}
+	acc->SetNumber(res);
+	acc->ReverseOrder();
 	return *acc;
 }
 
 AccNumber AccNumber::operator % (AccNumber& c) {
 	AccNumber* acc = new AccNumber();
+	AccNumber that = *this;
+	AccNumber divNum = (*this / c) * c;
+	*acc = that - divNum;
 	return *acc;
 }
 
 void AccNumber::ReverseOrder() {
 	string res;
-	for (size_t i = number.size() - 1; i >= 0; i--) {
+	for (long long int i = number.size() - 1; i >= 0; i--) {
 		res.push_back(number[i]);
 	}
 	number = res;
 }
+
 
 
 /// ---------------------------------------------------------------------------------

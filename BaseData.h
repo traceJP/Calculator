@@ -51,7 +51,7 @@ public:
 	}
 private:
 	string number;
-	bool isMinus;
+	bool isMinus = false;
 	void ReverseOrder();
 };
 

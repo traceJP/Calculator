@@ -1,9 +1,9 @@
 ﻿#include "Calculate.cpp"
 #include "BaseData.h"
 
+string CheckTypeAndCalculate(vector<string> words);
+
 int main() {
-	// BaseData AccNumber Complex
-	Calculate<Complex>* optor = new Calculate<Complex>();
 	vector<string> keywords;
 	string word;
 	cout << "请输入计算公式：";
@@ -13,8 +13,28 @@ int main() {
 		}
 		keywords.push_back(word);
 	}
+	// cout << CheckTypeAndCalculate(keywords);
+	Calculate<AccNumber>* optor = new Calculate<AccNumber>();
 	cout << optor->OnStack(keywords).GetNumber();
-	return 0;
+}
+
+
+string CheckTypeAndCalculate(vector<string> words) {
+	for (string item : words) {
+		// 复数运算
+		if (item.front() == '(' && item.back() == ')') {
+			Calculate<Complex>* optor = new Calculate<Complex>();
+			return optor->OnStack(words).GetNumber();
+		}
+		// 高精度运算
+		if (item.size() > 999) {
+			Calculate<AccNumber>* optor = new Calculate<AccNumber>();
+			return optor->OnStack(words).GetNumber();
+		}
+	}
+	// 普通运算
+	Calculate<BaseData>* optor = new Calculate<BaseData>();
+	return optor->OnStack(words).GetNumber();
 }
 
 // 测试样例：
