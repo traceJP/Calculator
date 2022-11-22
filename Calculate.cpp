@@ -49,8 +49,6 @@ void Calculate<T>::Operate() {
 	case '#':
 		res = vb.Sqrt(va);
 		break;
-	default:
-		throw new exception();
 	}
 
 	nums.push(res);
@@ -72,7 +70,7 @@ void Calculate<T>::CheckOps(char op) {
 		if (!ops.empty() && PriorWeight(op) < PriorWeight(ops.top())) {
 			do {
 				Operate();
-			} while (!ops.empty() && PriorWeight(op) > PriorWeight(ops.top()));
+			} while (!ops.empty() && PriorWeight(op) < PriorWeight(ops.top()));
 		}
 		ops.push(op);
 	}
@@ -89,6 +87,9 @@ int Calculate<T>::PriorWeight(char op) {
 	case '/':
 	case '%':
 		return 2;
+	case '^':
+	case '#' :
+		return 3;
 	default:
 		return -1;
 	}

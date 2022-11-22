@@ -13,9 +13,7 @@ int main() {
 		}
 		keywords.push_back(word);
 	}
-	// cout << CheckTypeAndCalculate(keywords);
-	Calculate<AccNumber>* optor = new Calculate<AccNumber>();
-	cout << optor->OnStack(keywords).GetNumber();
+	cout << CheckTypeAndCalculate(keywords);
 }
 
 
@@ -27,7 +25,7 @@ string CheckTypeAndCalculate(vector<string> words) {
 			return optor->OnStack(words).GetNumber();
 		}
 		// 高精度运算
-		if (item.size() > 999) {
+		if (item.size() > 10) {
 			Calculate<AccNumber>* optor = new Calculate<AccNumber>();
 			return optor->OnStack(words).GetNumber();
 		}
